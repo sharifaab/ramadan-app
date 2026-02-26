@@ -55,7 +55,14 @@ button {
 }
 
 .badge {
-    font-size: 40px;
+    font-size: 50px;
+    animation: pop 0.5s ease;
+}
+
+@keyframes pop {
+    0% {transform: scale(0);}
+    80% {transform: scale(1.2);}
+    100% {transform: scale(1);}
 }
 
 .history {
@@ -164,5 +171,6 @@ display();
 </body>
 
 </html>
+
 
 
