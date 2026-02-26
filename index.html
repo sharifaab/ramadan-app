@@ -127,9 +127,13 @@ function saveDay() {
 
   day.points = calculatePoints(day);
   day.complete = day.fast && day.quran && day.qiyam && day.dhikr;
+    if(day.complete && navigator.vibrate){
+    navigator.vibrate(200);
+}
 
   data[today] = day;
   saveData(data);
+    alert("✅ تم حفظ عبادات اليوم\nبارك الله فيك 🤲");
   display();
 }
 
@@ -160,4 +164,5 @@ display();
 </body>
 
 </html>
+
 
