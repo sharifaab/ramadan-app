@@ -3,65 +3,81 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0c2b2e">
-
 <title>متتبع عبادات رمضان</title>
 
 <style>
 body {
     margin: 0;
-    font-family: Tahoma, sans-serif;
-    background: linear-gradient(180deg, #0c2b2e, #114b5f);
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background: linear-gradient(180deg, #062d2f, #0f4c5c);
     color: white;
     text-align: center;
 }
 
 .container {
-    max-width: 500px;
+    max-width: 420px;
     margin: auto;
     padding: 20px;
 }
 
+h2 {
+    margin-top: 10px;
+    font-weight: 600;
+}
+
+.lang-btn {
+    margin-bottom: 10px;
+}
+
 .card {
     background: rgba(255,255,255,0.08);
-    padding: 15px;
-    border-radius: 15px;
+    padding: 18px;
+    border-radius: 18px;
     margin-top: 15px;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
 }
 
 .checkbox {
     display: flex;
     justify-content: space-between;
-    background: rgba(255,255,255,0.1);
-    padding: 10px;
-    margin: 8px 0;
-    border-radius: 10px;
+    align-items: center;
+    background: rgba(255,255,255,0.08);
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 12px;
+}
+
+input[type="checkbox"] {
+    transform: scale(1.3);
 }
 
 button {
-    background: #f9c74f;
+    background: linear-gradient(45deg,#f9c74f,#ffd166);
     border: none;
-    padding: 10px 20px;
-    border-radius: 10px;
+    padding: 12px 28px;
+    border-radius: 12px;
+    font-size: 16px;
     cursor: pointer;
+    margin-top: 10px;
 }
 
 .points {
-    font-size: 22px;
+    font-size: 24px;
     margin-top: 10px;
-    color: #f9c74f;
+    color: #ffd166;
 }
 
 .badge {
-    font-size: 50px;
-    animation: pop 0.5s ease;
+    font-size: 55px;
+    animation: pop 0.6s ease;
 }
 
 @keyframes pop {
     0% {transform: scale(0);}
-    80% {transform: scale(1.2);}
+    80% {transform: scale(1.3);}
     100% {transform: scale(1);}
 }
 
@@ -70,41 +86,118 @@ button {
     max-height: 200px;
     overflow-y: auto;
 }
+
+.history div {
+    background: rgba(255,255,255,0.07);
+    padding: 8px;
+    border-radius: 8px;
+    margin: 5px 0;
+}
 </style>
 </head>
 
 <body>
 
 <div class="container">
-    <h2>🌙 متتبع عبادات رمضان</h2>
+    <h2 id="title">🌙 متتبع عبادات رمضان</h2>
+    <button class="lang-btn" onclick="toggleLang()">🌐</button>
     <div id="date"></div>
 
     <div class="card">
-        <div class="checkbox"><label>صيام</label><input type="checkbox" id="fast"></div>
-        <div class="checkbox"><label>قراءة القرآن</label><input type="checkbox" id="quran"></div>
-        <div class="checkbox"><label>قيام الليل</label><input type="checkbox" id="qiyam"></div>
-        <div class="checkbox"><label>الذكر</label><input type="checkbox" id="dhikr"></div>
+        <div class="checkbox">
+            <label id="label-fast" for="fast">صيام</label>
+            <input type="checkbox" id="fast">
+        </div>
 
-        <button onclick="saveDay()">حفظ اليوم</button>
+        <div class="checkbox">
+            <label id="label-quran" for="quran">قراءة القرآن</label>
+            <input type="checkbox" id="quran">
+        </div>
 
-        <div class="points">النقاط: <span id="points">0</span></div>
+        <div class="checkbox">
+            <label id="label-qiyam" for="qiyam">قيام الليل</label>
+            <input type="checkbox" id="qiyam">
+        </div>
+
+        <div class="checkbox">
+            <label id="label-dhikr" for="dhikr">الذكر</label>
+            <input type="checkbox" id="dhikr">
+        </div>
+
+        <button onclick="saveDay()" id="save-btn">حفظ اليوم</button>
+
+        <div class="points">
+            <span id="points-label">النقاط</span>:
+            <span id="points">0</span>
+        </div>
+
         <div class="badge" id="badge"></div>
     </div>
 
     <div class="card">
-        <h3>السجل</h3>
+        <h3 id="history-title">السجل</h3>
         <div id="history"></div>
     </div>
 </div>
 
 <script>
-const today = new Date().toISOString().split('T')[0];
-document.getElementById("date").innerText = "التاريخ: " + today;
 
+// Language System
+let lang = localStorage.getItem("lang") || "ar";
+
+const translations = {
+  ar: {
+    title: "متتبع عبادات رمضان",
+    fast: "صيام",
+    quran: "قراءة القرآن",
+    qiyam: "قيام الليل",
+    dhikr: "الذكر",
+    save: "حفظ اليوم",
+    history: "السجل",
+    points: "النقاط"
+  },
+  tr: {
+    title: "Ramazan İbadet Takibi",
+    fast: "Oruç",
+    quran: "Kur'an Okuma",
+    qiyam: "Gece Namazı",
+    dhikr: "Zikir",
+    save: "Günü Kaydet",
+    history: "Geçmiş",
+    points: "Puan"
+  }
+};
+
+function toggleLang(){
+  lang = lang === "ar" ? "tr" : "ar";
+  localStorage.setItem("lang", lang);
+  applyLanguage();
+}
+
+function applyLanguage(){
+  const t = translations[lang];
+  document.getElementById("title").innerText = "🌙 " + t.title;
+  document.getElementById("label-fast").innerText = t.fast;
+  document.getElementById("label-quran").innerText = t.quran;
+  document.getElementById("label-qiyam").innerText = t.qiyam;
+  document.getElementById("label-dhikr").innerText = t.dhikr;
+  document.getElementById("save-btn").innerText = t.save;
+  document.getElementById("history-title").innerText = t.history;
+  document.getElementById("points-label").innerText = t.points;
+}
+
+applyLanguage();
+
+// Date
+const today = new Date().toISOString().split('T')[0];
+document.getElementById("date").innerText = today;
+
+// Service Worker
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('service-worker.js');
 }
 
+// Data
 function loadData() {
   return JSON.parse(localStorage.getItem("ramadanData")) || {};
 }
@@ -126,28 +219,27 @@ function saveDay() {
   const data = loadData();
 
   const day = {
-    fast: document.getElementById("fast").checked,
-    quran: document.getElementById("quran").checked,
-    qiyam: document.getElementById("qiyam").checked,
-    dhikr: document.getElementById("dhikr").checked
+    fast: fast.checked,
+    quran: quran.checked,
+    qiyam: qiyam.checked,
+    dhikr: dhikr.checked
   };
 
   day.points = calculatePoints(day);
   day.complete = day.fast && day.quran && day.qiyam && day.dhikr;
-    if(day.complete && navigator.vibrate){
-    navigator.vibrate(200);
-}
+
+  if(day.complete && navigator.vibrate){
+      navigator.vibrate(200);
+  }
 
   data[today] = day;
   saveData(data);
-    alert("✅ تم حفظ عبادات اليوم\nبارك الله فيك 🤲");
   display();
 }
 
 function display() {
   const data = loadData();
   let total = 0;
-
   const historyDiv = document.getElementById("history");
   historyDiv.innerHTML = "";
 
@@ -156,7 +248,7 @@ function display() {
     total += d.points;
 
     const item = document.createElement("div");
-    item.innerHTML = `${date} — ${d.points} نقطة ${d.complete ? "⭐" : ""}`;
+    item.innerHTML = `${date} — ${d.points} ${translations[lang].points} ${d.complete ? "⭐" : ""}`;
     historyDiv.appendChild(item);
   });
 
@@ -166,11 +258,8 @@ function display() {
 }
 
 display();
+
 </script>
 
 </body>
-
 </html>
-
-
-
