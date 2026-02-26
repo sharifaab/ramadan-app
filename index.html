@@ -172,6 +172,7 @@ function toggleLang(){
   lang = lang === "ar" ? "tr" : "ar";
   localStorage.setItem("lang", lang);
   applyLanguage();
+  display(); // إعادة تحديث السجل والنقاط باللغة الجديدة
 }
 
 function applyLanguage(){
@@ -214,6 +215,19 @@ function calculatePoints(day) {
   if (day.dhikr) points += 3;
   return points;
 }
+
+function updateLivePoints() {
+  const day = {
+    fast: fast.checked,
+    quran: quran.checked,
+    qiyam: qiyam.checked,
+    dhikr: dhikr.checked
+  };
+
+  const livePoints = calculatePoints(day);
+  document.getElementById("points").innerText = livePoints;
+}
+
 
 function saveDay() {
   const data = loadData();
