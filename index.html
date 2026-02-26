@@ -119,10 +119,11 @@ function saveDay(){
     const data = loadData();
 
     const day = {
-        fast: fast.checked,
-        quran: quran.checked,
-        qiyam: qiyam.checked,
-        dhikr: dhikr.checked
+        fast: document.getElementById("fast").checked,
+        quran: document.getElementById("quran").checked,
+        qiyam: document.getElementById("qiyam").checked,
+        dhikr: document.getElementById("dhikr").checked
+    };
     };
 
     day.points = calculatePoints(day);
@@ -136,7 +137,7 @@ function saveDay(){
 function display(){
     const data = loadData();
     let total=0;
-    history.innerHTML="";
+    document.getElementById("history").innerHTML="";
 
     Object.keys(data).reverse().forEach(date=>{
         const d=data[date];
@@ -147,12 +148,13 @@ function display(){
         history.appendChild(item);
     });
 
-    points.innerText=total;
-    badge.innerText = data[today]?.complete ? "⭐" : "";
+    document.getElementById("points").innerText = total;
+document.getElementById("badge").innerText = data[today]?.complete ? "⭐" : "";
 }
 
 display();
 </script>
 
 </body>
+
 </html>
