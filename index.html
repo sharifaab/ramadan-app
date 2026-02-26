@@ -95,61 +95,63 @@ const today = new Date().toISOString().split('T')[0];
 document.getElementById("date").innerText = "التاريخ: " + today;
 
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('service-worker.js');
+  navigator.serviceWorker.register('service-worker.js');
 }
 
-function loadData(){
-    return JSON.parse(localStorage.getItem("ramadanData")) || {};
+function loadData() {
+  return JSON.parse(localStorage.getItem("ramadanData")) || {};
 }
 
-function saveData(data){
-    localStorage.setItem("ramadanData", JSON.stringify(data));
+function saveData(data) {
+  localStorage.setItem("ramadanData", JSON.stringify(data));
 }
 
-function calculatePoints(day){
-    let p=0;
-    if(day.fast) p+=10;
-    if(day.quran) p+=5;
-    if(day.qiyam) p+=7;
-    if(day.dhikr) p+=3;
-    return p;
+function calculatePoints(day) {
+  let points = 0;
+  if (day.fast) points += 10;
+  if (day.quran) points += 5;
+  if (day.qiyam) points += 7;
+  if (day.dhikr) points += 3;
+  return points;
 }
 
-function saveDay(){
-    const data = loadData();
+function saveDay() {
+  const data = loadData();
 
-    const day = {
-        fast: document.getElementById("fast").checked,
-        quran: document.getElementById("quran").checked,
-        qiyam: document.getElementById("qiyam").checked,
-        dhikr: document.getElementById("dhikr").checked
-    };
-    };
+  const day = {
+    fast: document.getElementById("fast").checked,
+    quran: document.getElementById("quran").checked,
+    qiyam: document.getElementById("qiyam").checked,
+    dhikr: document.getElementById("dhikr").checked
+  };
 
-    day.points = calculatePoints(day);
-    day.complete = day.fast && day.quran && day.qiyam && day.dhikr;
+  day.points = calculatePoints(day);
+  day.complete = day.fast && day.quran && day.qiyam && day.dhikr;
 
-    data[today] = day;
-    saveData(data);
-    display();
+  data[today] = day;
+  saveData(data);
+  display();
 }
 
-function display(){
-    const data = loadData();
-    let total=0;
-    document.getElementById("history").innerHTML="";
+function display() {
+  const data = loadData();
+  let total = 0;
 
-    Object.keys(data).reverse().forEach(date=>{
-        const d=data[date];
-        total+=d.points;
+  const historyDiv = document.getElementById("history");
+  historyDiv.innerHTML = "";
 
-        const item=document.createElement("div");
-        item.innerHTML=`${date} — ${d.points} نقطة ${d.complete?"⭐":""}`;
-        history.appendChild(item);
-    });
+  Object.keys(data).sort().reverse().forEach(date => {
+    const d = data[date];
+    total += d.points;
 
-    document.getElementById("points").innerText = total;
-document.getElementById("badge").innerText = data[today]?.complete ? "⭐" : "";
+    const item = document.createElement("div");
+    item.innerHTML = `${date} — ${d.points} نقطة ${d.complete ? "⭐" : ""}`;
+    historyDiv.appendChild(item);
+  });
+
+  document.getElementById("points").innerText = total;
+  document.getElementById("badge").innerText =
+    data[today]?.complete ? "⭐" : "";
 }
 
 display();
@@ -158,3 +160,4 @@ display();
 </body>
 
 </html>
+
